@@ -9,6 +9,9 @@ import { Register } from './pages/Register';
 import { Profile } from './pages/Profile';
 import { Sandbox } from './pages/Sandbox';
 import { SiteWeb } from './pages/SiteWeb';
+import { Article } from './pages/Article';
+import { Avantage } from './pages/Avantage';
+import { Jolt } from './pages/Jolt';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
@@ -55,6 +58,27 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <SiteWeb />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/article" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Article />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/avantage" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Avantage />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/jolt" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Jolt />
                 </Layout>
               </ProtectedRoute>
             } />

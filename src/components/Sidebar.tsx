@@ -82,6 +82,75 @@ export const Sidebar: React.FC = () => {
               <span className="text-sm">Site web</span>
             </Link>
           </motion.div>
+          
+          {/* Section Article cliquable */}
+          <motion.div
+            initial={{ x: -30, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: menuItems.length * 0.1 + 0.5 }}
+          >
+            <Link
+              to="/article"
+              className={`flex items-center space-x-3 px-4 py-2 ml-8 rounded-lg transition-all duration-200 ${
+                location.pathname === '/article'
+                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                  : 'text-gray-400 hover:text-white hover:bg-purple-500/10'
+              }`}
+            >
+              <span className="text-sm">Article</span>
+            </Link>
+          </motion.div>
+          
+          {/* Section Avantage cliquable */}
+          <motion.div
+            initial={{ x: -30, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: menuItems.length * 0.1 + 0.6 }}
+          >
+            <Link
+              to="/avantage"
+              className={`flex items-center space-x-3 px-4 py-2 ml-8 rounded-lg transition-all duration-200 ${
+                location.pathname === '/avantage'
+                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                  : 'text-gray-400 hover:text-white hover:bg-purple-500/10'
+              }`}
+            >
+              <span className="text-sm">Avantage</span>
+            </Link>
+          </motion.div>
+        </motion.div>
+        
+        {/* Sous-menu Autre */}
+        <motion.div
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: menuItems.length * 0.1 + 0.7 }}
+          className="pt-6 mt-6 border-t border-purple-500/20"
+        >
+          <div className="flex items-center space-x-2 mb-3">
+            <div className="w-6 h-6 flex items-center justify-center">
+              <span className="text-base font-mono text-purple-400">&gt;_</span>
+            </div>
+            <h3 className="text-lg font-bold text-white">Autre</h3>
+          </div>
+          
+          {/* Section Jolt cliquable */}
+          <motion.div
+            initial={{ x: -30, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: menuItems.length * 0.1 + 0.8 }}
+          >
+            <Link
+              to="/jolt"
+              className={`flex items-center space-x-3 px-4 py-2 ml-8 rounded-lg transition-all duration-200 ${
+                location.pathname === '/jolt'
+                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                  : 'text-gray-400 hover:text-white hover:bg-purple-500/10'
+              }`}
+            >
+              <span className="text-sm">Jolt</span>
+            </Link>
+          </motion.div>
         </motion.div>
       </nav>
     </motion.aside>

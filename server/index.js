@@ -9,6 +9,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import usersRoute from './routes/users.js';
 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -95,6 +96,17 @@ db.exec(`
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
   );
+
+  CREATE TABLE IF NOT EXISTS articles (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  url TEXT NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  style TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
 `);
 
 // Middleware d'authentification
@@ -482,9 +494,52 @@ app.delete('/api/websites/:id', authenticateToken, (req, res) => {
 });
 
 
-app.use(usersRoute);
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);
 });
+
+app.post('/api/articles', authenticateToken, (req, res) => {
+  const { url, title, description, style } = req.body;
+
+  if (!url || !title || !style) {
+    return res.status(400).json({ error: 'Champs obligatoires manquants' });
+  }
+
+  const result = db.prepare(`
+    INSERT INTO articles (user_id, url, title, description, style)
+    VALUES (?, ?, ?, ?, ?)
+  `).run(req.user.userId, url.trim(), title.trim(), description?.trim() || '', style.trim());
+
+  const article = db.prepare('SELECT * FROM articles WHERE id = ?').get(result.lastInsertRowid);
+  res.status(201).json(article);
+});
+
+app.get('/api/articles', authenticateToken, (req, res) => {
+  const articles = db.prepare(`
+    SELECT a.*, u.username
+    FROM articles a
+    JOIN users u ON a.user_id = u.id
+    ORDER BY a.created_at DESC
+  `).all();
+  res.json(articles);
+});
+
+app.delete('/api/articles/:id', authenticateToken, (req, res) => {
+  const { id } = req.params;
+
+  const article = db.prepare('SELECT * FROM articles WHERE id = ?').get(id);
+  if (!article) return res.status(404).json({ error: 'Article non trouvé' });
+
+  if (article.user_id !== req.user.userId && req.user.email !== 'admin@holbertonstudents.com') {
+    return res.status(403).json({ error: 'Non autorisé à supprimer cet article' });
+  }
+
+  db.prepare('DELETE FROM articles WHERE id = ?').run(id);
+  res.json({ message: 'Article supprimé' });
+});
+
+
+app.use(usersRoute);
