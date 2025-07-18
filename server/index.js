@@ -74,6 +74,17 @@ db.exec(`
     FOREIGN KEY (post_id) REFERENCES posts (id),
     FOREIGN KEY (user_id) REFERENCES users (id)
   );
+
+  CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+  );
 `);
 
 // Middleware d'authentification
@@ -275,6 +286,121 @@ app.get('/api/posts/:id/corrections', authenticateToken, (req, res) => {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 });
+
+// Routes pour les commentaires
+app.get('/api/posts/:id/comments', (req, res) => {
+  try {
+    const { id } = req.params;
+    const comments = db.prepare(`
+      SELECT 
+        c.*,
+        u.username
+      FROM comments c
+      JOIN users u ON c.user_id = u.id
+      WHERE c.post_id = ?
+      ORDER BY c.created_at ASC
+    `).all(id);
+
+    res.json(comments);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+app.post('/api/posts/:id/comments', authenticateToken, (req, res) => {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+
+    if (!content || content.trim().length === 0) {
+      return res.status(400).json({ error: 'Le contenu du commentaire est requis' });
+    }
+
+    // Vérifier que le post existe
+    const post = db.prepare('SELECT * FROM posts WHERE id = ?').get(id);
+    if (!post) {
+      return res.status(404).json({ error: 'Post non trouvé' });
+    }
+
+    // Créer le commentaire
+    const result = db.prepare(`
+      INSERT INTO comments (post_id, user_id, content)
+      VALUES (?, ?, ?)
+    `).run(id, req.user.userId, content.trim());
+
+    // Récupérer le commentaire créé avec les infos de l'utilisateur
+    const newComment = db.prepare(`
+      SELECT 
+        c.*,
+        u.username
+      FROM comments c
+      JOIN users u ON c.user_id = u.id
+      WHERE c.id = ?
+    `).get(result.lastInsertRowid);
+
+    res.status(201).json(newComment);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+app.put('/api/comments/:id', authenticateToken, (req, res) => {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+
+    if (!content || content.trim().length === 0) {
+      return res.status(400).json({ error: 'Le contenu du commentaire est requis' });
+    }
+
+    // Vérifier que le commentaire existe et appartient à l'utilisateur
+    const comment = db.prepare('SELECT * FROM comments WHERE id = ? AND user_id = ?').get(id, req.user.userId);
+    if (!comment) {
+      return res.status(404).json({ error: 'Commentaire non trouvé ou non autorisé' });
+    }
+
+    // Mettre à jour le commentaire
+    db.prepare(`
+      UPDATE comments 
+      SET content = ?, updated_at = CURRENT_TIMESTAMP 
+      WHERE id = ?
+    `).run(content.trim(), id);
+
+    // Récupérer le commentaire mis à jour
+    const updatedComment = db.prepare(`
+      SELECT 
+        c.*,
+        u.username
+      FROM comments c
+      JOIN users u ON c.user_id = u.id
+      WHERE c.id = ?
+    `).get(id);
+
+    res.json(updatedComment);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+app.delete('/api/comments/:id', authenticateToken, (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Vérifier que le commentaire existe et appartient à l'utilisateur
+    const comment = db.prepare('SELECT * FROM comments WHERE id = ? AND user_id = ?').get(id, req.user.userId);
+    if (!comment) {
+      return res.status(404).json({ error: 'Commentaire non trouvé ou non autorisé' });
+    }
+
+    // Supprimer le commentaire
+    db.prepare('DELETE FROM comments WHERE id = ?').run(id);
+
+    res.json({ message: 'Commentaire supprimé avec succès' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 app.use(usersRoute);
 
 const PORT = process.env.PORT || 3001;

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Calendar, Code, User, Eye, EyeOff } from 'lucide-react';
+import { Comments } from './Comments';
 
 interface Post {
   id: number;
@@ -108,6 +109,9 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated, compact
           <span>Modifié {formatDate(post.updated_at)}</span>
         </div>
       )}
+
+      {/* Comments section - only show in non-compact mode */}
+      {!compact && <Comments postId={post.id} />}
     </motion.div>
   );
 };
