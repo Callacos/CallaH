@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { CodeEditor } from '../components/CodeEditor';
 import { PostCard } from '../components/PostCard';
+import { MatrixRain } from '../components/MatrixRain';
 import { Code, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -62,9 +63,12 @@ export const Sandbox: React.FC = () => {
   };
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full relative">
+      {/* Matrix Rain Background */}
+      <MatrixRain />
+      
       {/* Liste des posts avec code */}
-      <div className="w-1/3 border-r border-purple-500/20 bg-black/20 overflow-y-auto">
+      <div className="w-1/3 border-r border-purple-500/20 bg-black/20 backdrop-blur-sm overflow-y-auto relative z-10">
         <div className="p-4 border-b border-purple-500/20">
           <div className="flex items-center space-x-2 mb-4">
             <Code className="w-5 h-5 text-purple-400" />
@@ -101,14 +105,14 @@ export const Sandbox: React.FC = () => {
       </div>
 
       {/* Éditeur de code */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col relative z-10">
         {selectedPost ? (
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex-1 flex flex-col"
           >
-            <div className="p-4 border-b border-purple-500/20 bg-black/20">
+            <div className="p-4 border-b border-purple-500/20 bg-black/20 backdrop-blur-sm">
               <h3 className="text-lg font-semibold text-white mb-2">
                 Édition du code - {selectedPost.author_name}
               </h3>
@@ -126,11 +130,11 @@ export const Sandbox: React.FC = () => {
             </div>
           </motion.div>
         ) : (
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex-1 flex items-center justify-center bg-black/10 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-center"
+              className="text-center bg-black/30 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/20"
             >
               <Code className="w-16 h-16 text-purple-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-white mb-2">
