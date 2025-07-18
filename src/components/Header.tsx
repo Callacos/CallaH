@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { LogOut, User } from 'lucide-react';
+import { useState } from 'react';
 
 export const Header: React.FC = () => {
   const { user, logout } = useAuth();
@@ -18,7 +19,7 @@ export const Header: React.FC = () => {
           className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
           whileHover={{ scale: 1.05 }}
         >
-          Holberton Social
+          CallaH
         </motion.h1>
         
         <div className="flex items-center space-x-4">

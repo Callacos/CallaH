@@ -7,6 +7,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import usersRoute from './routes/users.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -274,6 +275,7 @@ app.get('/api/posts/:id/corrections', authenticateToken, (req, res) => {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 });
+app.use(usersRoute);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
+import { SearchBar } from './SearchBar';
 
 interface LayoutProps {
   children: ReactNode;
@@ -15,6 +16,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         <main className="flex-1 overflow-y-auto">
           {children}
         </main>
+        <SearchBar />
       </div>
     </div>
   );

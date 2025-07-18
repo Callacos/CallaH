@@ -53,13 +53,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       },
       body: JSON.stringify({ email, password }),
     });
-
+    console.log(response);
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.error || 'Erreur de connexion');
     }
 
     const data = await response.json();
+    console.log(data);
     setToken(data.token);
     setUser(data.user);
     localStorage.setItem('token', data.token);
