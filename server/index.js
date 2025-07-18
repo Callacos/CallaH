@@ -85,6 +85,16 @@ db.exec(`
     FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
   );
+
+  CREATE TABLE IF NOT EXISTS websites (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    url TEXT NOT NULL,
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+  );
 `);
 
 // Middleware d'authentification
@@ -400,6 +410,77 @@ app.delete('/api/comments/:id', authenticateToken, (req, res) => {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 });
+
+// Routes pour les websites
+app.get('/api/websites', authenticateToken, (req, res) => {
+  try {
+    const websites = db.prepare(`
+      SELECT w.*, u.username as added_by
+      FROM websites w
+      JOIN users u ON w.user_id = u.id
+      ORDER BY w.created_at DESC
+    `).all();
+
+    res.json(websites);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+app.post('/api/websites', authenticateToken, (req, res) => {
+  try {
+    const { name, url, description } = req.body;
+
+    if (!name || !url) {
+      return res.status(400).json({ error: 'Le nom et l\'URL sont requis' });
+    }
+
+    // Vérifier que l'URL est valide
+    try {
+      new URL(url);
+    } catch {
+      return res.status(400).json({ error: 'URL invalide' });
+    }
+
+    // Créer le website
+    const result = db.prepare(`
+      INSERT INTO websites (user_id, name, url, description)
+      VALUES (?, ?, ?, ?)
+    `).run(req.user.userId, name.trim(), url.trim(), description?.trim() || '');
+
+    // Récupérer le website créé
+    const newWebsite = db.prepare('SELECT * FROM websites WHERE id = ?').get(result.lastInsertRowid);
+
+    res.status(201).json(newWebsite);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+app.delete('/api/websites/:id', authenticateToken, (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Récupérer le site
+    const website = db.prepare('SELECT * FROM websites WHERE id = ?').get(id);
+    if (!website) {
+      return res.status(404).json({ error: 'Site web non trouvé' });
+    }
+
+    // Vérifier que c’est l’auteur ou un admin
+    if (website.user_id !== req.user.userId && req.user.email !== 'admin@holbertonstudents.com') {
+      return res.status(403).json({ error: 'Non autorisé à supprimer ce site' });
+    }
+
+    // Supprimer
+    db.prepare('DELETE FROM websites WHERE id = ?').run(id);
+
+    res.json({ message: 'Site web supprimé avec succès' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 
 app.use(usersRoute);
 

@@ -26,7 +26,7 @@ export const Sidebar: React.FC = () => {
         transition={{ delay: 0.2 }}
       >
         <Terminal className="w-8 h-8 text-purple-400" />
-        <h2 className="text-xl font-bold text-white">HSN</h2>
+        <h2 className="text-xl font-bold text-white">Menu</h2>
       </motion.div>
       
       <nav className="space-y-2">
@@ -50,6 +50,39 @@ export const Sidebar: React.FC = () => {
             </Link>
           </motion.div>
         ))}
+        
+        {/* Sous-menu Aide */}
+        <motion.div
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: menuItems.length * 0.1 + 0.3 }}
+          className="pt-6 mt-6 border-t border-purple-500/20"
+        >
+          <div className="flex items-center space-x-2 mb-3">
+            <div className="w-6 h-6 flex items-center justify-center">
+              <span className="text-base font-mono text-purple-400">&gt;_</span>
+            </div>
+            <h3 className="text-lg font-bold text-white">Aide</h3>
+          </div>
+          
+          {/* Section Site web cliquable */}
+          <motion.div
+            initial={{ x: -30, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: menuItems.length * 0.1 + 0.4 }}
+          >
+            <Link
+              to="/siteweb"
+              className={`flex items-center space-x-3 px-4 py-2 ml-8 rounded-lg transition-all duration-200 ${
+                location.pathname === '/siteweb'
+                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                  : 'text-gray-400 hover:text-white hover:bg-purple-500/10'
+              }`}
+            >
+              <span className="text-sm">Site web</span>
+            </Link>
+          </motion.div>
+        </motion.div>
       </nav>
     </motion.aside>
   );

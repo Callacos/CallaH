@@ -8,6 +8,7 @@ import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Profile } from './pages/Profile';
 import { Sandbox } from './pages/Sandbox';
+import { SiteWeb } from './pages/SiteWeb';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
@@ -47,6 +48,13 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <Sandbox />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/siteweb" element={
+              <ProtectedRoute>
+                <Layout>
+                  <SiteWeb />
                 </Layout>
               </ProtectedRoute>
             } />
