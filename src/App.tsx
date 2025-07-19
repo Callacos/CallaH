@@ -12,7 +12,15 @@ import { SiteWeb } from './pages/SiteWeb';
 import { Article } from './pages/Article';
 import { Avantage } from './pages/Avantage';
 import { Jolt } from './pages/Jolt';
+import { Python } from './pages/Python';
+import { CSS } from './pages/CSS';
+import { HTML } from './pages/HTML';
+import { C } from './pages/C';
+import { Groupe } from './pages/Groupe';
+import { Chat } from './pages/Chat';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { Evenement } from './pages/Evenement';
+import { Sondage } from './pages/Sondage';
 
 function App() {
   return (
@@ -79,6 +87,62 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <Jolt />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/python" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Python />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/css" element={
+              <ProtectedRoute>
+                <Layout>
+                  <CSS />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/html" element={
+              <ProtectedRoute>
+                <Layout>
+                  <HTML />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/c" element={
+              <ProtectedRoute>
+                <Layout>
+                  <C />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/groupe" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Groupe />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/chat" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Chat />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/evenement" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Evenement />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/sondage" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Sondage />
                 </Layout>
               </ProtectedRoute>
             } />

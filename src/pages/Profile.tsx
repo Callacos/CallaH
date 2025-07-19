@@ -52,7 +52,7 @@ export const Profile: React.FC = () => {
             <Calendar className="w-5 h-5 text-purple-400" />
             <div>
               <p className="text-sm text-gray-400">Membre depuis</p>
-              <p className="text-white">Récemment</p>
+              <p className="text-white">18/07/2025</p>
             </div>
           </motion.div>
         </div>
